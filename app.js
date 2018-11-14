@@ -5,6 +5,9 @@ app.controller("miControlador",['$scope','$timeout',function($scope,$timeout) {
 	//a continuación, se crea un array de palabras posibles entre las que se pueden mostrar en la pantalla
 	var palabrasPosibles=["plastidecor","pelete","rosa","morado","pegote"];
 
+	var vocales = ['a','e','i','o','u'];
+	var tildes = ['á','é','í','ó','ú'];
+
 	//aquí se crean dos arrays para ir almacenando las letras que se introducen. Se mete dentro del scope porque está dentro del propio scope del programa
 	$scope.letrasIncorrectas=[];
 	$scope.letrasCorrectas=[];
@@ -47,7 +50,21 @@ app.controller("miControlador",['$scope','$timeout',function($scope,$timeout) {
 	}
 
 //A esta función hay que ponerla en el scope porque se llama desde la vista, no desde aquí dentro.
-	$scope.letraElegida = function() {
+$scope.letraElegida = function() {
+
+	if($scope.input.letra.length != 1) {
+		$scope.input.letra = "";
+
+		$scope.mensaje = "Debes introducir solo un caracter.";
+
+		$timeout(function() {
+			$scope.mensaje = "";
+		},1000);
+
+		return;
+	}
+
+		comprobarVocal();
 
 		//Se empieza a recorrer el array donde están las letras que se han acertado y se compara con la letra que ha introducido el usuario en el input
 		for (var i = 0; i < $scope.letrasCorrectas.length; i++) {
@@ -86,26 +103,37 @@ app.controller("miControlador",['$scope','$timeout',function($scope,$timeout) {
 
 		}
 
-					$scope.input.letra = "";
 
-		if($scope.intentos == 0) {
-			alert("¡Has perdido!");
-			$timeout(function(){
-				nuevoJuego();
-			},500);
-		}
+	$scope.input.letra = "";
 
-		if($scope.cadenaMostrada.indexOf("*") == -1) {
-			alert("¡Acertaste la palabra! "+palabraSecreta.toUpperCase());
-			$timeout(function(){
-				nuevoJuego();
-			},500);
-		}
-
-
+	if($scope.intentos == 0) {
+		alert("¡Has perdido!");
+		$timeout(function(){
+			nuevoJuego();
+		},1500);
 	}
 
-	nuevoJuego();
+	if($scope.cadenaMostrada.indexOf("*") == -1) {
+		alert("¡Acertaste la palabra! "+palabraSecreta.toUpperCase());
+		$timeout(function(){
+			nuevoJuego();
+		},1500);
+	}
+
+
+}
+
+var comprobarVocal = function() {
+	var l = $scope.input.letra.toLowerCase();
+	for (var i = 0; i < vocales.length; i++) {
+		if(l == vocales[i].toLowerCase() || l == tildes[i].toLowerCase()) {
+			$scope.input.letra = vocales[i].toLowerCase();
+			return;
+		}
+	}
+}
+
+nuevoJuego();
 
 
 }])
