@@ -2,15 +2,18 @@ var app = angular.module('miApp', []);
 
 app.controller("miControlador",['$scope','$timeout','$http',function($scope,$timeout, $http) {
 
+	var array = new Object();
+
 	$http.get('palabras.json').then(function(datos) {
 		//console.log(typeof datos);
 		//console.log(typeof datos.data);
 		//console.log(typeof datos.data.palabras);
 		//console.log(datos.data.palabras);
-		var array = datos.data.palabras;
+		array = datos.data.palabras;
+		console.log(typeof array);
 		//console.log(elegirPalabraAleatoria(array));
 		//var palabra = elegirPalabraAleatoria(array);
-		nuevoJuego(elegirPalabraAleatoria(array));
+		nuevoJuego(array);
 	});
 
 	//a continuación, se crea un array de palabras posibles entre las que se pueden mostrar en la pantalla
@@ -18,6 +21,10 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 
 	var vocales = ['a','e','i','o','u'];
 	var tildes = ['á','é','í','ó','ú'];
+
+	var palabraSecreta = "";
+
+
 
 	//aquí se crean dos arrays para ir almacenando las letras que se introducen. Se mete dentro del scope porque está dentro del propio scope del programa
 	$scope.letrasIncorrectas=[];
@@ -45,7 +52,10 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		return array[index];
 	}
 
-	var nuevoJuego = function(palabraSecreta) {
+	var nuevoJuego = function(array) {
+
+		palabraSecreta = elegirPalabraAleatoria(array);
+
 		console.log(typeof palabraSecreta);
 		console.log(palabraSecreta.length);
 		console.log(palabraSecreta);
@@ -129,20 +139,20 @@ $scope.letraElegida = function() {
 
 	if($scope.intentos == 0) {
 		alert("¡Has perdido!");
-		/*
+		
 		$timeout(function(){
-			nuevoJuego();
-		},1500);
-		*/
+			nuevoJuego(array);
+		},500);
+		
 	}
 
 	if($scope.cadenaMostrada.indexOf("*") == -1) {
 		alert("¡Acertaste la palabra! "+palabraSecreta.toUpperCase());
-		/*
+		
 		$timeout(function(){
-			nuevoJuego();
-		},1500);
-		*/
+			nuevoJuego(array);
+		},500);
+		
 	}
 
 
