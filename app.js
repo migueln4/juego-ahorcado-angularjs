@@ -1,9 +1,20 @@
 var app = angular.module('miApp', []);
 
-app.controller("miControlador",['$scope','$timeout',function($scope,$timeout) {
+app.controller("miControlador",['$scope','$timeout','$http',function($scope,$timeout, $http) {
+
+	$http.get('palabras.json').then(function(datos) {
+		//console.log(typeof datos);
+		//console.log(typeof datos.data);
+		//console.log(typeof datos.data.palabras);
+		//console.log(datos.data.palabras);
+		var array = datos.data.palabras;
+		//console.log(elegirPalabraAleatoria(array));
+		//var palabra = elegirPalabraAleatoria(array);
+		nuevoJuego(elegirPalabraAleatoria(array));
+	});
 
 	//a continuación, se crea un array de palabras posibles entre las que se pueden mostrar en la pantalla
-	var palabrasPosibles=["plastidecor","pelete","rosa","morado","pegote"];
+	//var palabrasPosibles=["plastidecor","pelete","rosa","morado","pegote"];
 
 	var vocales = ['a','e','i','o','u'];
 	var tildes = ['á','é','í','ó','ú'];
@@ -22,21 +33,31 @@ app.controller("miControlador",['$scope','$timeout',function($scope,$timeout) {
 	}
 
 	//Esta es una función que se puede llamar en cualquier momento de la ejecución
+	/*
 	var elegirPalabraAleatoria = function(){
 		var index = Math.round(Math.random()*(palabrasPosibles.length-1));
 		return palabrasPosibles[index];
 	}
+	*/
 
-	var nuevoJuego = function() {
+	var elegirPalabraAleatoria = function(array){
+		var index = Math.round(Math.random()*(array.length-1));
+		return array[index];
+	}
+
+	var nuevoJuego = function(palabraSecreta) {
+		console.log(typeof palabraSecreta);
+		console.log(palabraSecreta.length);
+		console.log(palabraSecreta);
 
 		$scope.letrasIncorrectas = [];
 		$scope.letrasCorrectas = [];
 		$scope.intentos = 6;
 		$scope.cadenaMostrada = "";
 
-		palabraSecreta = elegirPalabraAleatoria();
+		//palabraSecreta = elegirPalabraAleatoria();
 
-		console.log(palabraSecreta);
+		//console.log(palabraSecreta);
 
 		var tempPalabraMostrada = "";
 		
@@ -108,16 +129,20 @@ $scope.letraElegida = function() {
 
 	if($scope.intentos == 0) {
 		alert("¡Has perdido!");
+		/*
 		$timeout(function(){
 			nuevoJuego();
 		},1500);
+		*/
 	}
 
 	if($scope.cadenaMostrada.indexOf("*") == -1) {
 		alert("¡Acertaste la palabra! "+palabraSecreta.toUpperCase());
+		/*
 		$timeout(function(){
 			nuevoJuego();
 		},1500);
+		*/
 	}
 
 
@@ -133,7 +158,7 @@ var comprobarVocal = function() {
 	}
 }
 
-nuevoJuego();
+//nuevoJuego();
 
 
 }])
