@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Aprendiendo AngularJS</title>
+</head>
+<body ng-app="miApp" ng-controller="miControlador">
+	<div>
+
+		<div>Debes adivinar: {{cadenaMostrada}}</div>
+
+		<div>Intentos restantes {{intentos}}</div>
+
+		<div>Letras incorrectas<span ng-repeat="letra in letrasIncorrectas"> {{letra.toUpperCase()}} </span></div>
+
+		<div>
+			Letras correctas<span ng-repeat="letra in letrasCorrectas"> {{letra.toUpperCase()}} </span>
+		</div>
+
+		<div>
+			<input type="text" name="intento" ng-model="input.letra">
+			<!-- Se usa el ng-model para hacer referencia a algo que está en el controlador. Así, ese valor que se almacena en el input se puede capturar. -->
+			<button ng-click="letraElegida()">¡Vamos!</button>
+		</div>
+
+	</div>
+
+	<script src="angular.min.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>
