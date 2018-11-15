@@ -19,6 +19,7 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		//console.log(typeof datos.data.palabras);
 		//console.log(datos.data.palabras);
 		array = datos.data.palabras;
+		rangoPalabras = array.length-1;
 		//console.log(typeof array);
 		//console.log(elegirPalabraAleatoria(array));
 		//var palabra = elegirPalabraAleatoria(array);
@@ -28,6 +29,9 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 
 	var palabraSecreta = "";
 	var palabrasecretaFormateada = "";
+	var rangoPalabras = 0;
+	var indice = 0;
+	var arrayAux = [];
 
 	//aquí se crean dos arrays para ir almacenando las letras que se introducen. Se mete dentro del scope porque está dentro del propio scope del programa
 	$scope.letrasIncorrectas=[];
@@ -43,18 +47,23 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 	}
 
 	var elegirPalabraAleatoria = function(array){
-		var index = Math.round(Math.random()*(array.length-1));
+		var index = Math.round(Math.random()*rangoPalabras);
+		//Voy a duplicar el contenido de un array en otro auxiliar
+		arrayAux = JSON.parse(JSON.stringify(array));
+		arrayAux[index] = array[rangoPalabras];
+		arrayAux[rangoPalabras] = "";
+		--rangoPalabras;		
 		return array[index];
 	}
 
 	var nuevoJuego = function(array) {
-
-
+		console.log(array);
 		palabraSecreta = elegirPalabraAleatoria(array);
+
 		palabraSecretaFormateada = quitarTildes(palabraSecreta);
 
-		console.log("Tipo de palabrasecreta: "+typeof palabraSecreta);
-		console.log("Longitud palabraSecreta: "+palabraSecreta.length);
+		//console.log("Tipo de palabrasecreta: "+typeof palabraSecreta);
+		//console.log("Longitud palabraSecreta: "+palabraSecreta.length);
 		console.log("palabraSecreta "+palabraSecreta);
 
 		console.log("formateada: "+palabraSecretaFormateada);
@@ -148,18 +157,21 @@ $scope.letraElegida = function() {
 		alert("¡Has perdido!");
 		
 		$timeout(function(){
-			nuevoJuego(array);
+			nuevoJuego(arrayAux);
 		},500);
 		
 	}
 
 	if($scope.cadenaMostrada.indexOf("*") == -1) {
 		alert("¡Acertaste la palabra! "+palabraSecreta.toUpperCase());
-		
+		if(rangoPalabras >= 0) {
 		$timeout(function(){
-			nuevoJuego(array);
+			nuevoJuego(arrayAux);
 		},500);
+	} else {
+		alert("Ya no quedan palabras");
 		
+	}
 	}
 
 
