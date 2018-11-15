@@ -20,6 +20,7 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		//console.log(datos.data.palabras);
 		array = datos.data.palabras;
 		rangoPalabras = array.length-1;
+		$scope.nPartidasRestantes = array.length;
 		//console.log(typeof array);
 		//console.log(elegirPalabraAleatoria(array));
 		//var palabra = elegirPalabraAleatoria(array);
@@ -42,9 +43,14 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 	//esta es la palabra que se debe adivinar
 	$scope.cadenaMostrada = "";
 
+	$scope.nPartidasRestantes = 0;
+
 	$scope.input = {
 		letra:""
 	}
+
+	$scope.nAciertos = 0;
+	$scope.nFallos = 0;
 
 	var elegirPalabraAleatoria = function(array){
 		var index = Math.round(Math.random()*rangoPalabras);
@@ -52,7 +58,8 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		arrayAux = JSON.parse(JSON.stringify(array));
 		arrayAux[index] = array[rangoPalabras];
 		arrayAux[rangoPalabras] = "";
-		--rangoPalabras;		
+		--rangoPalabras;
+		--$scope.nPartidasRestantes;		
 		return array[index];
 	}
 
@@ -62,8 +69,6 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 
 		palabraSecretaFormateada = quitarTildes(palabraSecreta);
 
-		//console.log("Tipo de palabrasecreta: "+typeof palabraSecreta);
-		//console.log("Longitud palabraSecreta: "+palabraSecreta.length);
 		console.log("palabraSecreta "+palabraSecreta);
 
 		console.log("formateada: "+palabraSecretaFormateada);
@@ -154,27 +159,25 @@ $scope.letraElegida = function() {
 	$scope.input.letra = "";
 
 	if($scope.intentos == 0) {
-		alert("¡Has perdido!");
+		++$scope.nFallos;
+		alert("¡Has fallado! La palabra era: "+palabraSecreta.toUpperCase());
 		
 		$timeout(function(){
 			nuevoJuego(arrayAux);
 		},500);
-		
 	}
 
 	if($scope.cadenaMostrada.indexOf("*") == -1) {
+		++$scope.nAciertos;
 		alert("¡Acertaste la palabra! "+palabraSecreta.toUpperCase());
 		if(rangoPalabras >= 0) {
 		$timeout(function(){
 			nuevoJuego(arrayAux);
 		},500);
-	} else {
-		alert("Ya no quedan palabras");
-		
+		} else {
+			alert("Ya no quedan palabras");
+		}
 	}
-	}
-
-
 }
 
 var comprobarVocal = function() {

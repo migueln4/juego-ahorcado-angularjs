@@ -18,13 +18,21 @@
 		</div>
 
 		<div>
-			<input type="text" name="intento" ng-model="input.letra">
+			<input type="text" name="intento" ng-model="input.letra" ng-keyup="$event.keyCode == 13 ? letraElegida() : null" autofocus>
 			<!-- Se usa el ng-model para hacer referencia a algo que está en el controlador. Así, ese valor que se almacena en el input se puede capturar. -->
 			<button ng-click="letraElegida()">¡Vamos!</button>
+			<br>
+			<p>Número de partidas restantes: {{nPartidasRestantes}}</p>
 		</div>
 
 		<div>
 			<p>{{mensaje}}</p>
+		</div>
+
+		<div>
+			<h3>Resultados</h3>
+			<p>Aciertos: {{nAciertos}}</p>
+			<p>Fallos: {{nFallos}}</p>
 		</div>
 
 	</div>
