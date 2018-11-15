@@ -3,6 +3,15 @@ var app = angular.module('miApp', []);
 app.controller("miControlador",['$scope','$timeout','$http',function($scope,$timeout, $http) {
 
 	var array = new Object();
+	var vocales = new Object();
+	var tildes = new Object();
+	var consonantes = new Object();
+
+	var inicializarArrays = function(v,t,c) {
+		vocales = v;
+		tildes = t;
+		consonantes = c;
+	}
 
 	$http.get('palabras.json').then(function(datos) {
 		//console.log(typeof datos);
@@ -13,14 +22,9 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		//console.log(typeof array);
 		//console.log(elegirPalabraAleatoria(array));
 		//var palabra = elegirPalabraAleatoria(array);
+		inicializarArrays(datos.data.vocales,datos.data.tildes,datos.data.consonantes);
 		nuevoJuego(array);
 	});
-
-	//a continuación, se crea un array de palabras posibles entre las que se pueden mostrar en la pantalla
-	//var palabrasPosibles=["plastidecor","pelete","rosa","morado","pegote"];
-
-	var vocales = ['a','e','i','o','u'];
-	var tildes = ['á','é','í','ó','ú'];
 
 	var palabraSecreta = "";
 	var palabrasecretaFormateada = "";
@@ -37,14 +41,6 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 	$scope.input = {
 		letra:""
 	}
-
-	//Esta es una función que se puede llamar en cualquier momento de la ejecución
-	/*
-	var elegirPalabraAleatoria = function(){
-		var index = Math.round(Math.random()*(palabrasPosibles.length-1));
-		return palabrasPosibles[index];
-	}
-	*/
 
 	var elegirPalabraAleatoria = function(array){
 		var index = Math.round(Math.random()*(array.length-1));
@@ -91,6 +87,19 @@ $scope.letraElegida = function() {
 		},1000);
 
 		return;
+	}
+
+	if(!caracterCorrecto()) {
+		$scope.mensaje = $scope.input.letra+" no es un caracter admintido";
+
+		$scope.input.letra = "";
+
+		$timeout(function() {
+			$scope.mensaje = "";
+		},1000);
+
+		return;
+
 	}
 
 		comprobarVocal();
@@ -173,13 +182,9 @@ var quitarTildes = function(palabra) {
 	var salida = "";
 	for (var i = 0; i < palabra.length; i++) {
 		var encuentroTilde = false;
-		//console.log("Recorro la palabra "+palabra+i);
 		if(esVocal(palabra[i])) {
-			//console.log("Detecta vocal");
 			for (var j = 0; j < tildes.length; j++) {
-				//console.log("Recorro las tildes "+tildes[j]);
 				if(palabra[i].toLowerCase() == tildes[j].toLowerCase()) {
-					//console.log("Encuentro tilde");
 					salida += vocales[j];
 					encuentroTilde = true;
 					break;
@@ -200,6 +205,23 @@ var esVocal = function(letra) {
 		}
 	}
 	return false;
+}
+
+var esConsonante = function(letra) {
+	for (var i = 0; i < consonantes.length; i++) {
+		if(letra.toLowerCase() == consonantes[i].toLowerCase()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+var caracterCorrecto = function() {
+	if(esVocal($scope.input.letra) || esConsonante($scope.input.letra)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 
