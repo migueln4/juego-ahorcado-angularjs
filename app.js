@@ -10,7 +10,7 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		//console.log(typeof datos.data.palabras);
 		//console.log(datos.data.palabras);
 		array = datos.data.palabras;
-		console.log(typeof array);
+		//console.log(typeof array);
 		//console.log(elegirPalabraAleatoria(array));
 		//var palabra = elegirPalabraAleatoria(array);
 		nuevoJuego(array);
@@ -23,8 +23,7 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 	var tildes = ['á','é','í','ó','ú'];
 
 	var palabraSecreta = "";
-
-
+	var palabrasecretaFormateada = "";
 
 	//aquí se crean dos arrays para ir almacenando las letras que se introducen. Se mete dentro del scope porque está dentro del propio scope del programa
 	$scope.letrasIncorrectas=[];
@@ -54,27 +53,26 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 
 	var nuevoJuego = function(array) {
 
-		palabraSecreta = elegirPalabraAleatoria(array);
 
-		console.log(typeof palabraSecreta);
-		console.log(palabraSecreta.length);
-		console.log(palabraSecreta);
+		palabraSecreta = elegirPalabraAleatoria(array);
+		palabraSecretaFormateada = quitarTildes(palabraSecreta);
+
+		console.log("Tipo de palabrasecreta: "+typeof palabraSecreta);
+		console.log("Longitud palabraSecreta: "+palabraSecreta.length);
+		console.log("palabraSecreta "+palabraSecreta);
+
+		console.log("formateada: "+palabraSecretaFormateada);
 
 		$scope.letrasIncorrectas = [];
 		$scope.letrasCorrectas = [];
 		$scope.intentos = 6;
 		$scope.cadenaMostrada = "";
 
-		//palabraSecreta = elegirPalabraAleatoria();
-
-		//console.log(palabraSecreta);
-
 		var tempPalabraMostrada = "";
 		
 		for(var i = 0; i < palabraSecreta.length; i++) {
 			tempPalabraMostrada +="*";
 		}
-		//console.log(tempPalabraMostrada);
 
 		$scope.cadenaMostrada = tempPalabraMostrada;
 
@@ -118,8 +116,8 @@ $scope.letraElegida = function() {
 
 		//Si llegamos a quí, se recorre la palabra secreta y se comprueba si la letra está dentro de ella, o no.
 		for(var i = 0; i < palabraSecreta.length; i++) {
-			if($scope.input.letra.toLowerCase() == palabraSecreta[i].toLowerCase()) {
-				$scope.cadenaMostrada = $scope.cadenaMostrada.substring(0,i)+$scope.input.letra.toLowerCase()+$scope.cadenaMostrada.substring(i+1);
+			if($scope.input.letra.toLowerCase() == palabraSecretaFormateada[i].toLowerCase()) {
+				$scope.cadenaMostrada = $scope.cadenaMostrada.substring(0,i)+palabraSecreta[i]+$scope.cadenaMostrada.substring(i+1);
 				//En esta línea, lo que hago es seleccionar una subcadena de lo que está mostrando e ir hasta el índice de la letra que coincide con la que se muestra.
 				//Después, se introduce la letra coincidente en vez de lo que había y se vuelve a meter una subcadena
 				correcto = true;
@@ -160,15 +158,49 @@ $scope.letraElegida = function() {
 
 var comprobarVocal = function() {
 	var l = $scope.input.letra.toLowerCase();
-	for (var i = 0; i < vocales.length; i++) {
-		if(l == vocales[i].toLowerCase() || l == tildes[i].toLowerCase()) {
-			$scope.input.letra = vocales[i].toLowerCase();
+	if(esVocal(l)) {	
+		for (var i = 0; i < vocales.length; i++) {
+			if(l == vocales[i].toLowerCase() ||
+				l.toLowerCase() == tildes[i].toLowerCase()) {
+				$scope.input.letra = vocales[i].toLowerCase();
 			return;
+			}
 		}
 	}
 }
 
-//nuevoJuego();
+var quitarTildes = function(palabra) {
+	var salida = "";
+	for (var i = 0; i < palabra.length; i++) {
+		var encuentroTilde = false;
+		//console.log("Recorro la palabra "+palabra+i);
+		if(esVocal(palabra[i])) {
+			//console.log("Detecta vocal");
+			for (var j = 0; j < tildes.length; j++) {
+				//console.log("Recorro las tildes "+tildes[j]);
+				if(palabra[i].toLowerCase() == tildes[j].toLowerCase()) {
+					//console.log("Encuentro tilde");
+					salida += vocales[j];
+					encuentroTilde = true;
+					break;
+				}
+			}
+		}
+		if(!encuentroTilde)
+			salida += palabra[i];
+	}
+	return salida;
+}
+
+var esVocal = function(letra) {
+	for (var i = 0; i < vocales.length; i++) {
+		if(letra.toLowerCase() == vocales[i].toLowerCase() ||
+			letra.toLowerCase() == tildes[i].toLowerCase()) {
+			return true;
+		}
+	}
+	return false;
+}
 
 
 }])
