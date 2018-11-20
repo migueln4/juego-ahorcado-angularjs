@@ -13,17 +13,10 @@ app.controller("miControlador",['$scope','$timeout','$http',function($scope,$tim
 		consonantes = c;
 	}
 
-	$http.get('palabras.json').then(function(datos) {
-		//console.log(typeof datos);
-		//console.log(typeof datos.data);
-		//console.log(typeof datos.data.palabras);
-		//console.log(datos.data.palabras);
+	$http.get('datos/palabras.json').then(function(datos) {
 		array = datos.data.palabras;
 		rangoPalabras = array.length-1;
 		$scope.nPartidasRestantes = array.length;
-		//console.log(typeof array);
-		//console.log(elegirPalabraAleatoria(array));
-		//var palabra = elegirPalabraAleatoria(array);
 		inicializarArrays(datos.data.vocales,datos.data.tildes,datos.data.consonantes);
 		nuevoJuego(array);
 	});
